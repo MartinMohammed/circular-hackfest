@@ -1,0 +1,61 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    ports:
+      - "${SERVER_PORT:-3000}:${SERVER_PORT:-3000}" # API port
+      - "${WEB_SOCKET_PORT:-8080}:${WEB_SOCKET_PORT:-8080}" # WebSocket port
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-yourusername}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-yourpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-identifications_db}
+      POSTGRES_HOST: ${POSTGRES_HOST:-db}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      SERVER_PORT: ${SERVER_PORT:-3000}
+      WEB_SOCKET_PORT: ${WEB_SOCKET_PORT:-8080}
+    restart: always
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/src/app
+    restart: always
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-yourusername}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-yourpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-identifications_db}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  db_data:
