@@ -21,6 +21,18 @@ table {
   background-color: white;
 }
 
+/* Adjust table styles if necessary */
+
+/* Example: Adjust table cell width */
+table th,
+table td {
+  padding: 12px;
+  font-size: 14px;
+  color: #333;
+  /* Add this if you need to adjust cell widths */
+  /* width: 25%; */
+}
+
 thead {
   background-color: #4caf50;
   color: white;
@@ -66,4 +78,12 @@ tbody tr {
 tbody tr:hover {
   background-color: #f1f1f1;
   transition: background-color 0.3s ease;
+}
+
+/* Existing styles */
+
+.chart-container {
+  width: 80%;
+  height: 400px;
+  margin: 0 auto 40px;
 }

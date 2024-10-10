@@ -1,4 +1,5 @@
 // server.js
+
 const express = require("express");
 const WebSocket = require("ws");
 const bodyParser = require("body-parser");
@@ -24,14 +25,21 @@ const pool = new Pool({
 
 app.use(bodyParser.json());
 
+// Define possible damage classes
+const damageClasses = ["Minor", "Moderate", "Severe", "Critical"];
+
 app.post("/api/identifications", async (req, res) => {
   const { SerialNumber, ApplianceType, Timestamp } = req.body;
 
   if (SerialNumber && ApplianceType && Timestamp) {
     try {
+      // Generate a random damage class
+      const randomDamage =
+        damageClasses[Math.floor(Math.random() * damageClasses.length)];
+
       const result = await pool.query(
-        'INSERT INTO identifications (serial_number, appliance_type, "timestamp") VALUES ($1, $2, $3) RETURNING *',
-        [SerialNumber, ApplianceType, Timestamp]
+        'INSERT INTO identifications (serial_number, appliance_type, "timestamp", damage) VALUES ($1, $2, $3, $4) RETURNING *',
+        [SerialNumber, ApplianceType, Timestamp, randomDamage]
       );
 
       const identification = result.rows[0];
