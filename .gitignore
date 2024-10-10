@@ -30,7 +30,6 @@ Thumbs.db
 *.sublime-workspace
 
 # Docker
-**/Dockerfile
 docker-compose.override.yml
 
 # Miscellaneous
